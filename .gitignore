@@ -1,3 +1,131 @@
-.idea
-drupal9ci
-coverage.txt
+# Ignore dependencies that are managed with Composer.
+/drush/contrib/
+
+# Ignore Core code
+web/core
+
+# Ignore contrib code
+web/*/contrib
+web/libraries
+
+# Unignore custom
+!/web/*/custom/
+
+# Ignore third party libraries
+/vendor/
+
+# Ignore other files managed by Composer
+/web/core/
+/web/modules/README.txt
+/web/profiles/README.txt
+/web/sites/README.txt
+/web/sites/example.sites.php
+/web/sites/example.settings.local.php
+/web/sites/development.services.yml
+/web/themes/README.txt
+/web/vendor
+/web/.csslintrc
+/web/.editorconfig
+/web/.eslintignore
+/web/.eslintrc.json
+/web/.gitattributes
+/web/autoload.php
+/web/composer.json
+/web/composer.lock
+/web/example.gitignore
+/web/index.php
+/web/LICENSE.txt
+/web/README.md
+/web/robots.txt
+/web/update.php
+/web/web.config
+/web/INSTALL.txt
+
+# Temporary hide
+/web/default
+*-BAK
+*2.*
+
+# Ignore configuration files that may contain sensitive information.
+/web/sites/*/settings.local.php
+web/sites/*/settings.php
+web/sites/development.services.yml
+web/sites/*/services.*.yml
+
+# Ignore paths that contain Drupal user-generated content.
+/files/*
+!/files/.gitkeep
+
+/private/*
+!/private/.gitkeep
+
+/web/sites/*/files/*
+/web/sites/*/public
+/web/sites/*/private
+/web/sites/*/files-public
+/web/sites/*/files-private
+
+# Ignore paths that may contain temporary files
+/web/sites/*/translations
+/web/sites/*/tmp
+/web/sites/*/cache
+
+# Ignore SimpleTest multi-site environment.
+sites/simpletest
+
+# Ignore .env files as they are personal
+/.env
+
+# Ignore hidden files
+\.*
+!.gitignore
+
+# Ignore compiled CSS
+#*.css
+
+# Database files
+*.sql
+*.csv
+*.sql.gz
+
+# Unignore legacy
+!/web/themes/custom/inl/legacy/**/*.*
+
+# Webserver auth files
+.htpasswd
+
+auth.json
+
+#local Webserver
+docroot/.ht.router.php
+
+### macOS
+# General
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Icon must end with two \r
+Icon
+
+# Log files (if you are creating logs in debug mode, uncomment this)
+# *.log
+/logs
+
+# SFTP configuration file
+sftp-config.json
+
+# Salt
+salt.txt
+
+### DDEv
+.ddev
+settings.ddev.php
+
+### Miscellaneous
+module_list.txt
+
+web/.gitignore
+web/*/.gitignore
+web/sites/default/.gitignore
+web/themes/.gitignore

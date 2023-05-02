@@ -1,188 +1,137 @@
-# Drupal 9 CI
-
-[![Test](https://github.com/Lullabot/drupal9ci/actions/workflows/test.yml/badge.svg)](https://github.com/Lullabot/drupal9ci/actions/workflows/test.yml)
-[![Create release](https://github.com/Lullabot/drupal9ci/actions/workflows/create-release.yml/badge.svg)](https://github.com/Lullabot/drupal9ci/actions/workflows/create-release.yml)
-[![Publish Docker image](https://github.com/Lullabot/drupal9ci/actions/workflows/publish-docker-image.yml/badge.svg)](https://github.com/Lullabot/drupal9ci/actions/workflows/publish-docker-image.yml)
-[![codecov](https://codecov.io/gh/Lullabot/drupal9ci/branch/master/graph/badge.svg?token=akwlXfbC0W)](https://codecov.io/gh/Lullabot/drupal9ci)
-
-This repository provides the foundation to implement [Continuous Integration](https://en.wikipedia.org/wiki/Continuous_integration) in a Drupal 9
-project using any of the following CI providers:
-
- * [CircleCI](#circleci)
- * [Travis CI](#travis-ci)
- * [GitLab CI](#gitlab-ci)
- * [GitHub Actions](#github-actions)
- * [Bitbucket Pipelines](#bitbucket)
-
-If you want to test an individual module instead of a Drupal project, see Andrew Berry's
-[drupal_tests](https://github.com/deviantintegral/drupal_tests).
-
-Here is a clip that shows [how it works for CircleCI](https://www.youtube.com/watch?v=wd_5mX0x4K8).
-
-## Requirements
-
-The scripts assume that you have a Drupal 9 project created using [drupal-project](https://github.com/drupal-composer/drupal-project),
-which sets a well known foundation. If your project's directory
-structure differs from what _drupal-project_ sets up, you will need to
-adjust the CI scripts.
-
-It's also recommended to adjust your project to add a subset of the `settings.php` file into
-version control and rely on `settings.local.php` for setting the database connection. The CI scripts
-have their own `settings.local.php` which is copied at build time into `web/sites/default`.
-
-#### DocumentRoot: web vs docroot
-
-By default, Apache and the rest of the code is set up to have the `DocumentRoot` folder as `web`. If
-your project uses `docroot` instead, the easiest thing to do is to symlink one to the other. This can be
-done adding a line like [this one](https://github.com/Lullabot/drupal9ci/blob/master/dist/bitbucket/RoboFile.php#L187)
-before running Apache (you will need to adapt paths).
-
-Alternatively you can go through the files and replace as needed. You can see a list of affected files in
-[this comment](https://github.com/Lullabot/drupal9ci/issues/74#issuecomment-884238645).
-
-## Installation
-
-### [CircleCI](https://circleci.com)
-
-[Demo repository](https://github.com/juampynr/drupal8-circleci) | [Deep dive article](https://www.lullabot.com/articles/continuous-integration-drupal-8-circleci)
-
-Download the `drupal9ci` binary from https://github.com/Lullabot/drupal9ci/releases into the project root
-and run the command as `./drupal9ci` and select CircleCI. Once complete, continue below to complete the setup.
-
-Sign up at [CircleCI](https://circleci.com/) and allow access to your project's repository.
-
-![CircleCI watch](docs/images/circleci-watch.png)
-
-Happy CI-ing! :-D. From now every time you create a pull request, CircleCI will run the
-set of jobs and report their result like in the following screenshot:
-
-![CircleCI pull request](docs/images/circleci-pr.png)
-
-For an overview of the CircleCI features, have a look at
-[this article from the Lullabot blog](https://www.lullabot.com/articles/continuous-integration-drupal-8-circleci).
-
-#### Using a custom Docker image
-
-The [CircleCI configuration file](dist/circleci/.circleci/config.yml) uses a
-[custom Docker image](https://github.com/Lullabot/drupal9ci/pkgs/container/drupal9ci) that extends from
-the [official Drupal image](https://hub.docker.com/_/drupal/). If this image
-does not fit your project's architecture then consider [creating your own image](https://circleci.com/docs/2.0/custom-images/)
-based out of it.
-
-### [Travis CI](https://travis-ci.org)
-
-[Demo repository](https://github.com/juampynr/drupal8-travis-ci) | [Deep dive article](https://www.lullabot.com/articles/continuous-integration-in-drupal-8-with-travis-ci)
-
-Download the `drupal9ci` binary from https://github.com/Lullabot/drupal9ci/releases into the project root
-and run the command as `./drupal9ci` and select Travis CI. Once complete, continue below to complete the setup.
-
-Sign up at [Travis CI](https://travis-ci.com/) and allow access to your project's repository:
-
-![Travis watch](docs/images/travis-watch.png)
-
-Happy CI-ing! :-D. From now on every pull request will trigger a build in Travis and its
-progress will be visible like in the following screenshot:
-
-![Travis pull request](docs/images/travis-pr.png)
-
-For you to see the result of the individual jobs, you need to click at the Details link
-from the above screenshot:
-
-![Travis CI jobs](docs/images/travis-jobs.png)
-
-#### Setting up code coverage reports
-
-[Coveralls.io](https://coveralls.io/) is a third party tool that can host and present
-PHPUnit code coverage reports in a neat way within a pull request. Here is how to set it up:
-
-Register at https://coveralls.io using your GitHub account and then add your repository
-like in the following screenshot:
-
-![Coveralls add repository](docs/images/coveralls-add-repo.png)
-
-Then take the chance to adjust a couple settings to get cleaner feedback in pull
-requests:
-
-![Coveralls settings](docs/images/coveralls-settings.png)
-
-That's it! Here is a sample report which you can see by clicking at Details
-at the pull request's status message:
-
-![Coveralls report](docs/images/coveralls-report.png)
-
-
-### [GitLab CI](https://about.gitlab.com/features/gitlab-ci-cd/)
-
-[Demo repository](https://gitlab.com/juampynr/drupal8-gitlab) | [Deep dive article](https://www.lullabot.com/articles/installer-drupal-8-and-gitlab-ci)
-
-Download the `drupal9ci` binary from https://github.com/Lullabot/drupal9ci/releases into the project root
-and run the command as `./drupal9ci` and select GitLab CI. Once complete, continue below to complete the setup.
-
-Review, commit, and push the resulting changes. After doing that, navigate to the project's homepage
-at GitLab and open the CI / CD >> Pipelines section. You should see a running pipeline like
-the following one:
-
-![GitLab pipeline](docs/images/gitlab-pipeline.png)
-
-### [GitHub Actions](https://github.com/features/actions)
-
-[Demo repository](https://github.com/juampynr/drupal8-github-actions)
-
-Download the `drupal9ci` binary from https://github.com/Lullabot/drupal9ci/releases into the project root
-and run the command as `./drupal9ci` and select GitHub Actions. Once complete, continue below to complete the setup.
-
-Review, commit, and push the resulting changes. After doing that, navigate to the repository's homepage
-at GitHub and open the Actions tab. You should see a running workflow like the following one:
-
-![Github actions](docs/images/github-actions.png)
-
-
-### [Bitbucket](https://support.atlassian.com/bitbucket-cloud/docs/get-started-with-bitbucket-pipelines)
-
-Download the `drupal9ci` binary from https://github.com/Lullabot/drupal9ci/releases into the project root
-and run the command as `./drupal9ci` and select Bitbucket. Once complete, continue below to complete the setup.
-
-Review, commit, and push the resulting changes. After doing that, navigate to the repository's homepage
-at Bitbucket and open the Pipelines tab. You should see a running workflow like the following one:
-
-![Bitbucket pipelines](docs/images/bitbucket.png)
-
-### Setting up the Behat and Cypress jobs for all platforms
-
-The Behat and Cypress jobs require a running Drupal 9 site. The repository contains the code, but for running
-tests in a realistic environment you need:
-
-##### 1. A recent copy of the production environment's database
-
-There are several ways to accomplish this:
-
-**Using a prepopulated Docker database image**
-
-See [Achieve Rocketship-Fast Jobs in CircleCI by Preinstalling the Database](https://www.lullabot.com/articles/rocket-ship-fast-jobs-circleci-preinstalling-database)
-
-**Travis**
-
-If you have Drush site aliases, and your repository is private, then follow these
-instructions to [add an SSH key](https://docs.travis-ci.com/user/private-dependencies/#User-Key).
-Next, set up a drush site alias. Finally, adjust the Behat job to run `drush @my.alias sql-cli`.
-
-**CircleCI**
-
-If you have Drush site aliases, then at the CircleCI dashboard go to the project's permissions
-and add an SSH key. Next, add `drush @my.alias sql-cli` to the Behat job at `.circleci/config.yml`.
-
-**Alternative**
-
-Alternatively, upload a [sanitized](https://drushcommands.com/drush-8x/sql/sql-sanitize/) database
-dump somewhere and set up the `DB_DUMP_URL` environment variable so the job can download it.
-
-For example:
-![Travis CI db env var](docs/images/travisci-db-var.png)
-![CircleCI database via environment variable](docs/images/circleci-db-env.png)
-
-A sample implementation is to use Dropbox API. [See this repository for further details](https://github.com/juampynr/dropbox-api).
-
-##### 2. The production environment's files directory
-
-If you have a site alias, then add `drush rsync @my.alias @self` to the Behat job. Alternatively,
-use [Stage File Proxy](https://www.drupal.org/project/stage_file_proxy) module.
+# Composer template for Drupal projects
+
+[![CI](https://github.com/drupal-composer/drupal-project/actions/workflows/ci.yml/badge.svg?branch=10.x)](https://github.com/drupal-composer/drupal-project/actions/workflows/ci.yml)
+
+This project template provides a starter kit for managing your site
+dependencies with [Composer](https://getcomposer.org/).
+
+## Usage
+
+First you need to [install Composer](https://getcomposer.org/doc/00-intro.md#installation-linux-unix-osx).
+
+> Note: The instructions below refer to the [global Composer installation](https://getcomposer.org/doc/00-intro.md#globally).
+You might need to replace `composer` with `php composer.phar` (or similar)
+for your setup.
+
+After that you can create the project:
+
+```
+composer create-project drupal-composer/drupal-project:10.x-dev some-dir --no-interaction
+```
+
+With `composer require ...` you can download new dependencies to your
+installation.
+
+```
+cd some-dir
+composer require drupal/devel
+```
+
+The `composer create-project` command passes ownership of all files to the
+project that is created. You should create a new Git repository, and commit
+all files not excluded by the `.gitignore` file.
+
+## What does the template do?
+
+When installing the given `composer.json` some tasks are taken care of:
+
+* Drupal will be installed in the `web`-directory.
+* Autoloader is implemented to use the generated composer autoloader in `vendor/autoload.php`,
+  instead of the one provided by Drupal (`web/vendor/autoload.php`).
+* Modules (packages of type `drupal-module`) will be placed in `web/modules/contrib/`
+* Theme (packages of type `drupal-theme`) will be placed in `web/themes/contrib/`
+* Profiles (packages of type `drupal-profile`) will be placed in `web/profiles/contrib/`
+* Creates default writable versions of `settings.php` and `services.yml`.
+* Creates `web/sites/default/files`-directory.
+* Latest version of drush is installed locally for use at `vendor/bin/drush`.
+* Latest version of DrupalConsole is installed locally for use at `vendor/bin/drupal`.
+* Creates environment variables based on your .env file. See [.env.example](.env.example).
+
+## Updating Drupal Core
+
+This project will attempt to keep all of your Drupal Core files up-to-date; the
+project [drupal/core-composer-scaffold](https://github.com/drupal/core-composer-scaffold)
+is used to ensure that your scaffold files are updated every time drupal/core is
+updated. If you customize any of the "scaffolding" files (commonly `.htaccess`),
+you may need to merge conflicts if any of your modified files are updated in a
+new release of Drupal core.
+
+Follow the steps below to update your core files.
+
+1. Run `composer update "drupal/core-*" --with-dependencies` to update Drupal Core and its dependencies.
+2. Run `git diff` to determine if any of the scaffolding files have changed.
+   Review the files for any changes and restore any customizations to
+  `.htaccess` or `robots.txt`.
+1. Commit everything all together in a single commit, so `web` will remain in
+   sync with the `core` when checking out branches or running `git bisect`.
+1. In the event that there are non-trivial conflicts in step 2, you may wish
+   to perform these steps on a branch, and use `git merge` to combine the
+   updated core files with your customized files. This facilitates the use
+   of a [three-way merge tool such as kdiff3](http://www.gitshah.com/2010/12/how-to-setup-kdiff-as-diff-tool-for-git.html). This setup is not necessary if your changes are simple;
+   keeping all of your modifications at the beginning or end of the file is a
+   good strategy to keep merges easy.
+
+## FAQ
+
+### Should I commit the contrib modules I download?
+
+Composer recommends **no**. They provide [argumentation against but also
+workrounds if a project decides to do it anyway](https://getcomposer.org/doc/faqs/should-i-commit-the-dependencies-in-my-vendor-directory.md).
+
+### Should I commit the scaffolding files?
+
+The [Drupal Composer Scaffold](https://github.com/drupal/core-composer-scaffold)
+plugin can download the scaffold files (like index.php, update.php, …) to the
+web/ directory of your project. If you have not customized those files you could
+choose to not check them into your version control system (e.g. git). If that is
+the case for your project it might be convenient to automatically run the
+drupal-scaffold plugin after every install or update of your project. You can
+achieve that by registering `@composer drupal:scaffold` as post-install and
+post-update command in your composer.json:
+
+```json
+"scripts": {
+    "post-install-cmd": [
+        "@composer drupal:scaffold",
+        "..."
+    ],
+    "post-update-cmd": [
+        "@composer drupal:scaffold",
+        "..."
+    ]
+},
+```
+
+### How can I apply patches to downloaded modules?
+
+If you need to apply patches (depending on the project being modified, a pull
+request is often a better solution), you can do so with the
+[composer-patches](https://github.com/cweagans/composer-patches) plugin.
+
+To add a patch to drupal module foobar insert the patches section in the extra
+section of composer.json:
+
+```json
+"extra": {
+    "patches": {
+        "drupal/foobar": {
+            "Patch description": "URL or local path to patch"
+        }
+    }
+}
+```
+
+### How do I specify a PHP version?
+
+This project supports PHP 8.1 as minimum version (see [Environment requirements of Drupal 10](https://www.drupal.org/docs/system-requirements/php-requirements)), however it's possible that a `composer update` will upgrade some package that will then require PHP 8.1+.
+
+To prevent this you can add this code to specify the PHP version you want to use in the `config` section of `composer.json`:
+
+```json
+"config": {
+    "sort-packages": true,
+    "platform": {
+        "php": "8.1.13"
+    }
+},
+```
